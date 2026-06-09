@@ -1,0 +1,16 @@
+langchain
+langchain-openai
+langgraph
+python-dotenv
+duckduckgo-search
+beautifulsoup4
+sentence-transformers
+faiss-cpu
+numpy
+pyyaml
+tqdm
+requests
+fastapi
+uvicorn
+pydantic
+rank_bm25
