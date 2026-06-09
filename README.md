@@ -54,7 +54,19 @@ python3 graph_agent.py
 - Created a specialized **Librarian** node to maintain data integrity.
 - Verified state handoffs where the **Architect** synthesizes evidence gathered by the Librarian.
 
-## Honest CV Claims Unlocked
-- "Built a multi-agent orchestration system in LangGraph with specialized Research and Synthesis nodes."
-- "Implemented a Librarian/Architect pattern to ensure model integrity using retrieval-as-a-tool."
-- "Managed complex state handoffs and tool loops in a deterministic agentic graph."
+## Verification & fixes (2026-06-09)
+Both phases were re-run end-to-end and the output inspected (not trusted from logs). Two real defects were found and fixed:
+
+1. **Web search was dead.** `duckduckgo_search` is deprecated (renamed to `ddgs`); `search_web` silently returned no results, so the web leg of both phases produced nothing. Fixed by switching to `ddgs`. Re-verified: the agent now retrieves current web results (e.g. correctly identified the sitting Prime Minister of Sweden).
+2. **Source-provenance contamination in Phase 2.** The Architect was placing *web* citations under the "Technical Depth (AskRef)" heading and dropping the actual retrieved book — i.e. mislabelling web sources as library sources, the exact failure the Librarian/Architect split is meant to prevent. Fixed at three levels: tools now stamp output with `[LIBRARY SOURCE]` / `[WEB SOURCE]`; the Librarian must summarise under separate, attributed headings; the Architect must keep library and web citations in their own sections and never relabel. Re-verified: Section 2 now cites only real books (Financial Data Engineering, Developing High-Frequency Trading Systems, Clean Code with C# 2nd Ed, Software Architecture Patterns for Serverless Systems — all confirmed present in the library) and Section 3 only URLs.
+
+## Known limitations (be honest in demos)
+- **Web-source quality is not scored.** `ddgs` returns whatever ranks; a run surfaced low-quality `luxoret.com/prompts/ai-chat/...` pages. Provenance is separated and labelled, but quality is not yet filtered. Next hardening step.
+- It is a **terminal-run POC**, not a deployed service. No Streamlit/web front-end yet (Phase 3, not built).
+- The provenance guarantee is **prompt-enforced + source-tagged**, not schema-enforced; a sufficiently contrary model could still err. A typed `research_data` state field per source would harden it further.
+
+## Honest CV Claims Unlocked (verified by running, 2026-06-09)
+- "Built a multi-agent orchestration system in LangGraph with specialized Research (Librarian) and Synthesis (Architect) nodes."
+- "Implemented source-provenance separation so library and web evidence are tagged and never conflated — found and fixed a contamination bug where the synthesizer mislabelled web sources as library sources."
+- "Managed state handoffs and tool loops in a LangGraph agentic graph, with retrieval-as-a-tool over a 1080-book library (AskRef) plus live web search."
+- Do NOT claim: production deployment, a web UI, or validated web-source quality.

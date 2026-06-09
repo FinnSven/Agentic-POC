@@ -50,7 +50,14 @@ def librarian_node(state: AgentState):
         "You are the Lead Librarian. Your job is to RESEARCH a topic thoroughly. "
         "Use search_engineering_library for technical facts and search_web for news/context. "
         "You MUST find concrete evidence before passing the task to the Architect. "
-        "When you have enough information, summarize your findings and say 'RESEARCH_COMPLETE'."
+        "Tool outputs are tagged at the source: book results begin with [LIBRARY SOURCE], "
+        "web results begin with [WEB SOURCE]. PRESERVE THIS PROVENANCE. "
+        "When you summarize, use exactly two headings and attribute each finding to its origin: "
+        "'LIBRARY FINDINGS (from search_engineering_library)' listing only [LIBRARY SOURCE] book "
+        "facts (name the book), and 'WEB FINDINGS (from search_web)' listing only [WEB SOURCE] facts "
+        "(name the URL). NEVER move a web finding under the library heading or vice versa. "
+        "If a search returned nothing relevant, say so under that heading rather than filling it. "
+        "When done, end your summary with 'RESEARCH_COMPLETE'."
     )
     
     # We prefix the messages with the Librarian's system prompt
@@ -80,10 +87,16 @@ def architect_node(state: AgentState):
         research_context = state["messages"][-1].content
 
     system_msg = (
-        "You are the Lead System Architect. Your job is to take raw research data "
+        "You are the Lead System Architect. Your job is to take the Librarian's research "
         "and produce a professional, structured report or architectural recommendation. "
-        "Strictly adhere to the facts provided by the Librarian. "
-        "If the Librarian found a book reference in the engineering library, CITE IT. "
+        "Strictly adhere to the facts provided by the Librarian and PRESERVE SOURCE PROVENANCE. "
+        "Section 2 'Technical Depth (AskRef)' must cite ONLY the Librarian's LIBRARY FINDINGS "
+        "(books from the engineering library) — cite each book by name. "
+        "Section 3 'Context (Web)' must cite ONLY the Librarian's WEB FINDINGS (URLs). "
+        "NEVER present a web URL as a library/AskRef source, and never relabel across sections. "
+        "If the Librarian found no library sources, write 'No engineering-library sources were "
+        "retrieved for this query.' under Section 2 — do NOT backfill it with web content. "
+        "Begin the report with the title line '**Report:' so it is identifiable. "
         "Structure: 1. Overview, 2. Technical Depth (AskRef), 3. Context (Web), 4. Recommendation."
     )
     

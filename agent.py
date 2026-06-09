@@ -10,7 +10,7 @@ from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import MemorySaver
 from datetime import datetime
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from askref_tool import search_engineering_library
 
 load_dotenv()
@@ -48,7 +48,7 @@ def search_web(query: str):
             print(f"DEBUG: search_web found {len(results)} results")
             formatted = []
             for i, r in enumerate(results):
-                formatted.append(f"Result {i+1} from {r['href']}:\n{r['body']}\n")
+                formatted.append(f"[WEB SOURCE] Result {i+1} from URL {r['href']}:\n{r['body']}\n")
             return "\n---\n".join(formatted)
     except Exception as e:
         print(f"DEBUG: search_web error: {e}")

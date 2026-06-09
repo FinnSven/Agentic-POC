@@ -2,7 +2,7 @@ langchain
 langchain-openai
 langgraph
 python-dotenv
-duckduckgo-search
+ddgs
 beautifulsoup4
 sentence-transformers
 faiss-cpu

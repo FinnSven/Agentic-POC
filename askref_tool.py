@@ -52,7 +52,7 @@ class AskRefTool:
             source = chunk.source_path
             text = chunk.text_preview
             title = chunk.title
-            formatted_results.append(f"Result {i+1} from '{title}' ({source}):\n{text}\n")
+            formatted_results.append(f"[LIBRARY SOURCE] Result {i+1} from book '{title}' ({source}):\n{text}\n")
             
         return "\n---\n".join(formatted_results)
 
